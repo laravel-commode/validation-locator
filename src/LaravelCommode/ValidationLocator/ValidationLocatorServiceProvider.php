@@ -17,14 +17,14 @@
             return ['commode.validation-locator'];
         }
 
-        public function launching() { }
+        protected function launching() { }
 
         public function boot()
         {
             $this->package('commode/validation-locator');
         }
 
-        public function registering()
+        protected function registering()
         {
             $this->app->bindShared('commode.validation-locator', function() {
                 return new ValidationLocator($this->app['translator']);
