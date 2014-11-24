@@ -1,5 +1,7 @@
 #Commode: Validation locator
 
+[![Build Status](https://travis-ci.org/laravel-commode/validation-locator.svg?branch=master)](https://travis-ci.org/laravel-commode/validation-locator)
+
 >**_laravel-commode/validation-locator_** is laravel validation helper that could make your validation process
 more context reliable.
 
