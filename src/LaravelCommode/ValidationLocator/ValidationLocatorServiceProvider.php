@@ -26,11 +26,13 @@
 
         protected function registering()
         {
-            $this->app->bindShared('commode.validation-locator', function() {
+            $this->app->bindShared('commode.validation-locator', function()
+            {
                 return new ValidationLocator($this->app['translator']);
             });
 
-            $this->app->bind(Interfaces\IValidationLocator::class, function() {
+            $this->app->bind(Interfaces\IValidationLocator::class, function()
+            {
                 return $this->app['commode.validation-locator'];
             });
         }

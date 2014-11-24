@@ -150,4 +150,94 @@
 
             $this->assertNotEmpty($validatorMock->getMessages());
         }
+
+        public function testValidatorPassesExceptionOnEmpty()
+        {
+            $modelRules = ['name' => 'required', 'login' => 'required'];
+
+            $model = ['name' => 'Foo'];
+
+            $translatorMock = $this->translatorMock();
+            $validatorMock = $this->validatorMock($translatorMock);
+
+            $validatorMock->expects($this->any())->method('getRules')->will(
+                $this->returnValue($modelRules)
+            );
+
+            try {
+                $validatorMock->passes();
+            } catch(\Exception $e) {
+                $this->assertSame('No model was set. Nothing to validate', $e->getMessage());
+            }
+        }
+
+        public function testValidatorFailsExceptionOnEmpty()
+        {
+            $modelRules = ['name' => 'required', 'login' => 'required'];
+
+            $model = ['name' => 'Foo'];
+
+            $translatorMock = $this->translatorMock();
+            $validatorMock = $this->validatorMock($translatorMock);
+
+            $validatorMock->expects($this->any())->method('getRules')->will(
+                $this->returnValue($modelRules)
+            );
+
+            try {
+                $validatorMock->fails();
+            } catch(\Exception $e) {
+                $this->assertSame('No model was set. Nothing to validate', $e->getMessage());
+            }
+        }
+
+        public function testValidatorPassesAndPassesModel()
+        {
+            $modelRules = ['name' => 'required', 'login' => 'required'];
+
+            $model = ['name' => 'Foo'];
+
+            $translatorMock = $this->translatorMock();
+            $translatorMock->shouldReceive('trans')->once();
+
+            $validatorMock = $this->validatorMock($translatorMock);
+
+            $validatorMock->expects($this->any())->method('getRules')->will(
+                $this->returnValue($modelRules)
+            );
+
+            $validatorMock->expects($this->any())->method('getMessages')->will(
+                $this->returnValue([])
+            );
+
+            $validatorMock->setModel($model);
+
+            $this->assertFalse($validatorMock->passes());
+            $this->assertFalse($validatorMock->passesModel($model));
+        }
+
+        public function testValidatorFailsAndFailsModel()
+        {
+            $modelRules = ['name' => 'required', 'login' => 'required'];
+
+            $model = ['name' => 'Foo'];
+
+            $translatorMock = $this->translatorMock();
+            $translatorMock->shouldReceive('trans')->once();
+
+            $validatorMock = $this->validatorMock($translatorMock);
+
+            $validatorMock->expects($this->any())->method('getRules')->will(
+                $this->returnValue($modelRules)
+            );
+
+            $validatorMock->expects($this->any())->method('getMessages')->will(
+                $this->returnValue([])
+            );
+
+            $validatorMock->setModel($model);
+
+            $this->assertTrue($validatorMock->fails());
+            $this->assertTrue($validatorMock->failsModel($model));
+        }
     } 
