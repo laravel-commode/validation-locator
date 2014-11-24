@@ -13,12 +13,12 @@
     {
         protected function translatorMock()
         {
-            return \Mockery::mock(TranslatorInterface::class);
+            return \Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
         }
 
         protected function validatorMock(TranslatorInterface $translator)
         {
-            return $this->getMockBuilder(Validator::class)->
+            return $this->getMockBuilder('LaravelCommode\ValidationLocator\Validators\Validator')->
                 setConstructorArgs(func_get_args())->
                 setMethods(['getRules', 'getMessages'])->
                 getMockForAbstractClass();
