@@ -1,39 +1,46 @@
 <?php namespace LaravelCommode\ValidationLocator\Validators;
 
     use Symfony\Component\Translation\TranslatorInterface;
+    use Illuminate\Foundation\Application;
 
     abstract class Validator
     {
         /**
-         * @var \Symfony\Component\Translation\TranslatorInterface
+         * @var TranslatorInterface
          */
         private $translator;
 
         private $data = [];
 
         /**
-         * @var \Illuminate\Validation\Validator
+         * @var \Illuminate\Validation\Validator|null
          */
-        private $validator;
+        private $validator = null;
+
+        abstract public function getRules($isNew = true);
+
+        abstract public function getMessages();
 
         public function __construct(TranslatorInterface $translator)
         {
-            $this->translator = $translator;
+            $this->setTranslator($translator);
         }
-
-        abstract public function getRules($isNew = true);
-        abstract public function getMessages();
 
         public function setModel(array $data = [], $isNew = true)
         {
             $this->data = $data;
-            $this->validator = app('validator')->make($this->data, $this->getRules($isNew), $this->getMessages());
+
+            $this->validator = new \Illuminate\Validation\Validator(
+                $this->translator, $this->data, $this->getRules($isNew), $this->getMessages()
+            );
+
             $this->sometimes($this->validator);
+
             return $this;
         }
 
         /**
-         * @return \Illuminate\Validation\Validator
+         * @return \Illuminate\Validation\Validator|null
          */
         public function getValidator()
         {
@@ -41,4 +48,22 @@
         }
 
         public function sometimes(\Illuminate\Validation\Validator $validator) { }
+
+        /**
+         * @return TranslatorInterface
+         */
+        public function getTranslator()
+        {
+            return $this->translator;
+        }
+
+        /**
+         * @param TranslatorInterface $translator
+         * @return $this
+         */
+        public function setTranslator(TranslatorInterface $translator)
+        {
+            $this->translator = $translator;
+            return $this;
+        }
     }

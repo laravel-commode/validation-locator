@@ -10,13 +10,13 @@
         protected $validators = [];
 
         /**
-         * @var
+         * @var TranslatorInterface
          */
         private $translator;
 
         public function __construct(TranslatorInterface $translator)
         {
-            $this->translator = $translator;
+            $this->setTranslator($translator);
         }
 
         public function addValidator($shortname, $className)
@@ -26,10 +26,10 @@
 
         /**
          * @param $name
-         * @return Validator
+         * @return mixed
          * @throws \Exception
          */
-        public function __get($name)
+        public function getValidator($name)
         {
             if (isset($this->validators[$name]))
             {
@@ -38,5 +38,30 @@
             }
 
             throw new \Exception("Unknown validator {$name}");
+        }
+
+        /**
+         * @param $name
+         * @return \LaravelCommode\ValidationLocator\Validators\Validator
+         */
+        public function __get($name)
+        {
+            return $this->getValidator($name);
+        }
+
+        /**
+         * @return \Symfony\Component\Translation\TranslatorInterface
+         */
+        public function getTranslator()
+        {
+            return $this->translator;
+        }
+
+        /**
+         * @param \Symfony\Component\Translation\TranslatorInterface $translator
+         */
+        public function setTranslator(TranslatorInterface $translator)
+        {
+            $this->translator = $translator;
         }
     }
