@@ -1,15 +1,18 @@
 <?php
     namespace LaravelCommode\ValidationLocator;
 
-    use Illuminate\Translation\TranslationServiceProvider;
     use LaravelCommode\Common\GhostService\GhostService;
     use LaravelCommode\ValidationLocator\Locator\ValidationLocator;
 
     class ValidationLocatorServiceProvider extends GhostService
     {
+        protected $aliases = [
+            'ValidationLocator' => 'LaravelCommode\ValidationLocator\Facade\ValidationLocator'
+        ];
+
         public function uses()
         {
-            return [TranslationServiceProvider::class];
+            return ['Illuminate\Translation\TranslationServiceProvider'];
         }
 
         public function provides()
@@ -31,7 +34,7 @@
                 return new ValidationLocator($this->app['translator']);
             });
 
-            $this->app->bind(Interfaces\IValidationLocator::class, function()
+            $this->app->bind('LaravelCommode\ValidationLocator\Interfaces\IValidationLocator', function()
             {
                 return $this->app['commode.validation-locator'];
             });

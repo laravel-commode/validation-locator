@@ -31,7 +31,7 @@
 
             $appMock->shouldReceive('forceRegister')->andReturnUsing(function($provider) use ($service)
             {
-                $this->assertTrue(in_array($provider, array_merge([CommodeCommonServiceProvider::class], $service->uses())));
+                $this->assertTrue(in_array($provider, array_merge(['LaravelCommode\Common\CommodeCommonServiceProvider'], $service->uses())));
             });
 
             $appMock->shouldReceive('make')->andReturnUsing(function ($shortCut) use ($serviceManager, $resolver)

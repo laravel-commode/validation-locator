@@ -27,12 +27,12 @@
     {
         protected function translatorMock()
         {
-            return \Mockery::mock(TranslatorInterface::class);
+            return \Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
         }
 
         protected function validatorMock(TranslatorInterface $translator)
         {
-            return $this->getMockBuilder(Validator::class)->
+            return $this->getMockBuilder('LaravelCommode\ValidationLocator\Validators\Validator')->
                 setConstructorArgs(func_get_args())->
                 setMethods(['getRules', 'getMessages'])->
                 getMockForAbstractClass();
@@ -60,7 +60,7 @@
         {
             $validationLocator = new ValidationLocator($translator = $this->translatorMock());
 
-            $validationLocator->addValidator('test', TestValidator::class);
+            $validationLocator->addValidator('test', 'Locator\TestValidator');
 
             $this->assertTrue($validationLocator->getValidator('test') instanceof TestValidator);
             $this->assertTrue($validationLocator->test instanceof TestValidator);
@@ -70,7 +70,7 @@
         {
             $validationLocator = new ValidationLocator($translator = $this->translatorMock());
 
-            $validationLocator->addValidator('test', TestValidator::class);
+            $validationLocator->addValidator('test', 'Locator\TestValidator');
 
             try {
                 $validator = $validationLocator->getValidator('tesm');
