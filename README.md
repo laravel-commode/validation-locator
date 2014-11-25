@@ -53,19 +53,18 @@ that you usually pass to `Validator` facade. Method getMessages() must return an
         {
             /**
             * Validated account model data, if it's flagged as new
-            * password validation will be required.
+            * password validation and confirmation will be required.
             */
             public function getRules($isNew = true)
             {
                 $rules = [
                     'login'     => 'required',
-                    'email'     => 'required',
-                    'password'  => 'required'
+                    'email'     => 'required'
                 ];
 
                 if ($isNew)
                 {
-                    $rules['password'] .= '|confirmed';
+                    $rules['password'] = 'required|confirmed';
                 }
 
                 return $rules;
@@ -126,5 +125,59 @@ e.g:
                 });
 
                 // or ValidationLocator::addValidator('accountManagement', 'MyApp\Meta\Validations\AccountValidation')
+            }
+        }
+<hr />
+##<a name="usage">Usage</a>
+
+The most simple example of using ValidationLocator is using it injected into controller:
+
+    <?php namespace MyApp\Domain\Admin\Controllers;
+
+        use LaravelCommode\ValidationLocator\Interfaces\IValidationLocator;
+
+        use Illuminate\Routing\Controller;
+
+        class AccountController extends Controller
+        {
+            private $validationLocator;
+
+            public function __construct(IValidationLocator $validationLocator)
+            {
+                $this->validationLocator = $validationLocator; // not necessary if you are using a facade
+            }
+
+            public function postCreate()
+            {
+                $data = \Input::only(['login', 'email', 'password', 'password_confirmation']);
+
+                $validator = $this->validationLocator->getValidator('accountManagement');
+                            // or it's available through __get()
+                            // $this->validationLocator->getValidator->accountManagement;
+
+                if ($validator->failsModel($data, true)) // or $validator->setModel($data, true)->fails()
+                {
+                    return \Redirect::to(\URL::current())->withErrors($validator->getValidator());
+                                                // return redirect with errors
+                }
+
+                // do stuff
+            }
+
+            public function postEdit()
+            {
+                $data = \Input::only(['login', 'email']);
+
+                $validator = $this->validationLocator->getValidator('accountManagement');
+                            // or it's available through __get()
+                            // $this->validationLocator->getValidator->accountManagement;
+
+                if ($validator->failsModel($data, true)) // or $validator->setModel($data, true)->fails()
+                {
+                    return \Redirect::to(\URL::current())->withErrors($validator->getValidator());
+
+                }
+
+                // do stuff
             }
         }
