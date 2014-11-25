@@ -12,7 +12,7 @@
             return \Mockery::mock('Illuminate\Foundation\Application');
         }
 
-        public function testRegistration()
+        protected function buildServiceForRegistering()
         {
             $serviceManager = new GhostServices();
 
@@ -45,6 +45,62 @@
                 }
             });
 
+            return $service;
+        }
+
+        protected function buildService()
+        {
+            $service = new ValidationLocatorServiceProvider($this->getApplicationMock());
+            return $service;
+        }
+
+        public function testUses()
+        {
+            $service = $this->buildService();
+            $this->assertTrue(
+                in_array('Illuminate\Translation\TranslationServiceProvider', $service->uses())
+            );
+        }
+
+        public function testProvides()
+        {
+            $service = $this->buildService();
+            $this->assertTrue(
+                in_array('commode.validation-locator', $service->provides())
+            );
+        }
+
+        public function testLaunching()
+        {
+            $service = $this->buildService();
+
+            $reflection = new \ReflectionClass($service);
+
+            $reflectionMethod = $reflection->getMethod('launching');
+
+            $reflectionMethod->setAccessible(true);
+
+            $this->assertNull($reflectionMethod->invoke($service));
+
+            $reflectionMethod->setAccessible(false);
+        }
+
+        public function testBoot()
+        {
+            $serviceMockBuilder = $this->getMockBuilder(
+                'LaravelCommode\ValidationLocator\ValidationLocatorServiceProvider'
+            );
+
+            $serviceMockBuilder->setConstructorArgs([$this->getApplicationMock()]);
+            $serviceMockBuilder->setMethods(['package']);
+            $serviceMock = $serviceMockBuilder->getMock();
+
+            $serviceMock->boot();
+        }
+
+        public function testRegistration()
+        {
+            $service = $this->buildServiceForRegistering();
             $service->register();
         }
 

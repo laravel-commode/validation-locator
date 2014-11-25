@@ -31,12 +31,12 @@
         {
             $this->app->bindShared('commode.validation-locator', function()
             {
-                return new ValidationLocator($this->app['translator']);
+                return new ValidationLocator($this->app->make('translator'));
             });
 
             $this->app->bind('LaravelCommode\ValidationLocator\Interfaces\IValidationLocator', function()
             {
-                return $this->app['commode.validation-locator'];
+                return $this->app->make('commode.validation-locator');
             });
         }
     }
