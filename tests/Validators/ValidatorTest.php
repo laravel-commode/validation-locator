@@ -39,6 +39,11 @@
             return $validatorMock;
         }
 
+        protected function assertExceptionMessageEmptyData(\Exception $e)
+        {
+            $this->assertSame('No model was set. Nothing to validate', $e->getMessage());
+        }
+
         public function testValidator__construct()
         {
             $translatorMock = $this->translatorMock();
@@ -139,31 +144,25 @@
         {
             $modelRules = ['name' => 'required', 'login' => 'required'];
 
-            $model = ['name' => 'Foo'];
-
             $translatorMock = $this->translatorMock();
             $validatorMock = $this->buildValidator($translatorMock, $modelRules);
 
             try {
                 $validatorMock->passes();
             } catch(\Exception $e) {
-                $this->assertSame('No model was set. Nothing to validate', $e->getMessage());
+                $this->assertExceptionMessageEmptyData($e);
             }
         }
 
         public function testValidatorFailsExceptionOnEmpty()
         {
-            $modelRules = ['name' => 'required', 'login' => 'required'];
-
-            $model = ['name' => 'Foo'];
-
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
+            $validatorMock = $this->buildValidator($translatorMock);
 
             try {
                 $validatorMock->fails();
             } catch(\Exception $e) {
-                $this->assertSame('No model was set. Nothing to validate', $e->getMessage());
+                $this->assertExceptionMessageEmptyData($e);
             }
         }
 
