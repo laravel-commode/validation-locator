@@ -80,13 +80,6 @@ that you usually pass to `Validator` facade. Method getMessages() must return an
 Also validator provides you an ability to register validator's 'sometimes' callback. You can simply do it by
 overriding ``sometimes()`` method:
 
-        /**
-         * Allows to bind laravel validator instance "sometimes"
-         * callbacks. "Is new" marker will be passed.
-         *
-         * @param \Illuminate\Validation\Validator $validator Laravel validator instance
-         * @param bool $isNew Flag that shows of model is new or being updated.
-         */
         public function sometimes(\Illuminate\Validation\Validator $validator, $isNew = true)
         {
             //$validator->sometimes(); ...
