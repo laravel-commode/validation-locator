@@ -24,6 +24,21 @@
                 getMockForAbstractClass();
         }
 
+        protected function buildValidator($translatorMock, array $rules = [], array $messages = [])
+        {
+            $validatorMock = $this->validatorMock($translatorMock);
+
+            $validatorMock->expects($this->any())->method('getRules')->will(
+                $this->returnValue($rules)
+            );
+
+            $validatorMock->expects($this->any())->method('getMessages')->will(
+                $this->returnValue($messages)
+            );
+
+            return $validatorMock;
+        }
+
         public function testValidator__construct()
         {
             $translatorMock = $this->translatorMock();
@@ -56,15 +71,7 @@
             $model = ['name' => 'Foo'];
 
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getRules')->will(
-                $this->returnValue($modelRules)
-            );
-
-            $validatorMock->expects($this->any())->method('getMessages')->will(
-                $this->returnValue([])
-            );
+            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
 
             $validatorMock->setModel($model);
 
@@ -90,15 +97,7 @@
                 $this->assertTrue(in_array($field, ['validation.custom.login.required', "validation.attributes.login"]));
             });
 
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getRules')->will(
-                $this->returnValue($modelRules)
-            );
-
-            $validatorMock->expects($this->any())->method('getMessages')->will(
-                $this->returnValue([])
-            );
+            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
 
             $validatorMock->setModel($model);
 
@@ -114,19 +113,11 @@
         public function testValidatorGetRules()
         {
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getRules')->will(
-                $this->returnValue([])
-            );
+            $validatorMock = $this->buildValidator($translatorMock);
 
             $this->assertEmpty($validatorMock->getRules());
 
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getRules')->will(
-                $this->returnValue(['name' => 'required'])
-            );
+            $validatorMock = $this->buildValidator($translatorMock, ['name' => 'required']);
 
             $this->assertNotEmpty($validatorMock->getRules());
         }
@@ -134,19 +125,12 @@
         public function testValidatorGetMesages()
         {
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->validatorMock($translatorMock);
 
-            $validatorMock->expects($this->any())->method('getMessages')->will(
-                $this->returnValue([])
-            );
+            $validatorMock = $this->buildValidator($translatorMock);
 
             $this->assertEmpty($validatorMock->getMessages());
 
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getMessages')->will(
-                $this->returnValue(['name.required' => 'Required !'])
-            );
+            $validatorMock = $this->buildValidator($translatorMock, [], ['name.required' => 'Required!']);
 
             $this->assertNotEmpty($validatorMock->getMessages());
         }
@@ -158,11 +142,7 @@
             $model = ['name' => 'Foo'];
 
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getRules')->will(
-                $this->returnValue($modelRules)
-            );
+            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
 
             try {
                 $validatorMock->passes();
@@ -178,11 +158,7 @@
             $model = ['name' => 'Foo'];
 
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getRules')->will(
-                $this->returnValue($modelRules)
-            );
+            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
 
             try {
                 $validatorMock->fails();
@@ -200,15 +176,7 @@
             $translatorMock = $this->translatorMock();
             $translatorMock->shouldReceive('trans')->once();
 
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getRules')->will(
-                $this->returnValue($modelRules)
-            );
-
-            $validatorMock->expects($this->any())->method('getMessages')->will(
-                $this->returnValue([])
-            );
+            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
 
             $validatorMock->setModel($model);
 
@@ -225,15 +193,7 @@
             $translatorMock = $this->translatorMock();
             $translatorMock->shouldReceive('trans')->once();
 
-            $validatorMock = $this->validatorMock($translatorMock);
-
-            $validatorMock->expects($this->any())->method('getRules')->will(
-                $this->returnValue($modelRules)
-            );
-
-            $validatorMock->expects($this->any())->method('getMessages')->will(
-                $this->returnValue([])
-            );
+            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
 
             $validatorMock->setModel($model);
 
