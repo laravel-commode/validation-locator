@@ -188,16 +188,14 @@
         {
             $modelRules = ['name' => 'required', 'login' => 'required'];
 
-            $model = ['name' => 'Foo'];
-
             $translatorMock = $this->translatorMock();
-            $translatorMock->shouldReceive('trans')->once();
+            $translatorMock->shouldReceive('trans')->twice();
 
             $validatorMock = $this->buildValidator($translatorMock, $modelRules);
 
-            $validatorMock->setModel($model);
+            $validatorMock->setModel([]);
 
             $this->assertTrue($validatorMock->fails());
-            $this->assertTrue($validatorMock->failsModel($model));
+            $this->assertTrue($validatorMock->failsModel([]));
         }
     } 
