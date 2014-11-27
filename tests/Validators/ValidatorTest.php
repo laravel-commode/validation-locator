@@ -49,7 +49,7 @@
             $translatorMock = $this->translatorMock();
             $validatorMock = $this->validatorMock($translatorMock);
 
-            $this->assertSame($validatorMock->getTranslator(), $translatorMock);
+            $this->assertSame($translatorMock, $validatorMock->getTranslator());
         }
 
         public function testValidatorGetSetTranslator()

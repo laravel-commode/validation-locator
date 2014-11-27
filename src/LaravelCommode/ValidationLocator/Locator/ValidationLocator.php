@@ -16,7 +16,7 @@
 
         public function __construct(TranslatorInterface $translator)
         {
-            $this->setTranslator($translator);
+            $this->translator = $translator;
         }
 
         /**
