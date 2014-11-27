@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/laravel-commode/validation-locator.svg?branch=master)](https://travis-ci.org/laravel-commode/validation-locator)
 [![Code Climate](https://codeclimate.com/github/laravel-commode/validation-locator/badges/gpa.svg)](https://codeclimate.com/github/laravel-commode/validation-locator)
-[![Test Coverage](https://codeclimate.com/github/laravel-commode/validation-locator/badges/coverage.svg)](https://codeclimate.com/github/laravel-commode/validation-locator)
+[![Coverage Status](https://coveralls.io/repos/laravel-commode/validation-locator/badge.png?branch=master)](https://coveralls.io/r/laravel-commode/validation-locator?branch=master)
 
 >**_laravel-commode/validation-locator_** is laravel validation helper that could make your validation process
 more context reliable.
