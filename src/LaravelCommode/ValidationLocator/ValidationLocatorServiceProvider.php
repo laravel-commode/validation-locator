@@ -1,6 +1,7 @@
 <?php
     namespace LaravelCommode\ValidationLocator;
 
+    use Illuminate\Validation\DatabasePresenceVerifier;
     use LaravelCommode\Common\GhostService\GhostService;
     use LaravelCommode\ValidationLocator\Locator\ValidationLocator;
 
@@ -31,7 +32,8 @@
         {
             $this->app->bindShared('commode.validation-locator', function()
             {
-                return new ValidationLocator($this->app->make('translator'));
+                $presenceVerifier = new DatabasePresenceVerifier($this->app->make('db'));
+                return new ValidationLocator($this->app->make('translator'), $presenceVerifier);
             });
 
             $this->app->bind('LaravelCommode\ValidationLocator\Interfaces\IValidationLocator', function()

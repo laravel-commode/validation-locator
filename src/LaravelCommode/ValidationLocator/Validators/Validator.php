@@ -1,5 +1,6 @@
 <?php namespace LaravelCommode\ValidationLocator\Validators;
 
+    use Illuminate\Validation\PresenceVerifierInterface;
     use Symfony\Component\Translation\TranslatorInterface;
     use Illuminate\Foundation\Application;
 
@@ -24,14 +25,19 @@
          * @var \Illuminate\Validation\Validator|null
          */
         private $validator = null;
+        /**
+         * @var PresenceVerifierInterface
+         */
+        private $presenceVerifier;
 
         abstract public function getRules($isNew = true);
 
         abstract public function getMessages();
 
-        public function __construct(TranslatorInterface $translator)
+        public function __construct(TranslatorInterface $translator, PresenceVerifierInterface $presenceVerifier)
         {
             $this->translator = $translator;
+            $this->presenceVerifier = $presenceVerifier;
         }
 
         /**
@@ -51,6 +57,8 @@
             $this->validator = new \Illuminate\Validation\Validator(
                 $this->translator, $this->data, $this->getRules($isNew), $this->getMessages()
             );
+
+            $this->validator->setPresenceVerifier($this->presenceVerifier);
 
             $this->sometimes($this->validator, $isNew);
 

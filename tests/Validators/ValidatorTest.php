@@ -1,5 +1,6 @@
 <?php
     namespace Validators;
+    use Illuminate\Validation\PresenceVerifierInterface;
     use LaravelCommode\ValidationLocator\Validators\Validator;
     use Symfony\Component\Translation\TranslatorInterface;
 
@@ -16,7 +17,12 @@
             return \Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
         }
 
-        protected function validatorMock(TranslatorInterface $translator)
+        protected function presenceMock()
+        {
+            return \Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
+        }
+
+        protected function validatorMock(TranslatorInterface $translator, PresenceVerifierInterface $presenceVerifier)
         {
             return $this->getMockBuilder('LaravelCommode\ValidationLocator\Validators\Validator')->
                 setConstructorArgs(func_get_args())->
@@ -24,9 +30,9 @@
                 getMockForAbstractClass();
         }
 
-        protected function buildValidator($translatorMock, array $rules = [], array $messages = [])
+        protected function buildValidator($translatorMock, $presenceMock, array $rules = [], array $messages = [])
         {
-            $validatorMock = $this->validatorMock($translatorMock);
+            $validatorMock = $this->validatorMock($translatorMock, $presenceMock);
 
             $validatorMock->expects($this->any())->method('getRules')->will(
                 $this->returnValue($rules)
@@ -47,7 +53,9 @@
         public function testValidator__construct()
         {
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->validatorMock($translatorMock);
+            $presenceMock = $this->presenceMock();
+
+            $validatorMock = $this->validatorMock($translatorMock, $presenceMock);
 
             $this->assertSame($translatorMock, $validatorMock->getTranslator());
         }
@@ -55,7 +63,8 @@
         public function testValidatorGetSetTranslator()
         {
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->validatorMock($translatorMock);
+            $presenceMock = $this->presenceMock();
+            $validatorMock = $this->validatorMock($translatorMock, $presenceMock);
 
             $validatorMock->setTranslator($translatorMock);
             $this->assertSame($validatorMock->getTranslator(), $translatorMock);
@@ -64,7 +73,8 @@
         public function testEmptyValidator()
         {
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->validatorMock($translatorMock);
+            $presenceMock = $this->presenceMock();
+            $validatorMock = $this->validatorMock($translatorMock, $presenceMock);
 
             $this->assertNull($validatorMock->getValidator());
         }
@@ -76,7 +86,8 @@
             $model = ['name' => 'Foo'];
 
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
+            $presenceMock = $this->presenceMock();
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock, $modelRules);
 
             $validatorMock->setModel($model);
 
@@ -96,13 +107,14 @@
             $model = ['name' => 'Foo'];
 
             $translatorMock = $this->translatorMock();
+            $presenceMock = $this->presenceMock();
 
             $translatorMock->shouldReceive('trans')->twice(2)->andReturnUsing(function($field)
             {
                 $this->assertTrue(in_array($field, ['validation.custom.login.required', "validation.attributes.login"]));
             });
 
-            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock, $modelRules);
 
             $validatorMock->setModel($model);
 
@@ -118,11 +130,12 @@
         public function testValidatorGetRules()
         {
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->buildValidator($translatorMock);
+            $presenceMock = $this->presenceMock();
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock);
 
             $this->assertEmpty($validatorMock->getRules());
 
-            $validatorMock = $this->buildValidator($translatorMock, ['name' => 'required']);
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock, ['name' => 'required']);
 
             $this->assertNotEmpty($validatorMock->getRules());
         }
@@ -130,12 +143,13 @@
         public function testValidatorGetMesages()
         {
             $translatorMock = $this->translatorMock();
+            $presenceMock = $this->presenceMock();
 
-            $validatorMock = $this->buildValidator($translatorMock);
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock);
 
             $this->assertEmpty($validatorMock->getMessages());
 
-            $validatorMock = $this->buildValidator($translatorMock, [], ['name.required' => 'Required!']);
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock, [], ['name.required' => 'Required!']);
 
             $this->assertNotEmpty($validatorMock->getMessages());
         }
@@ -145,7 +159,8 @@
             $modelRules = ['name' => 'required', 'login' => 'required'];
 
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
+            $presenceMock = $this->presenceMock();
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock, $modelRules);
 
             try {
                 $validatorMock->passes();
@@ -157,7 +172,9 @@
         public function testValidatorFailsExceptionOnEmpty()
         {
             $translatorMock = $this->translatorMock();
-            $validatorMock = $this->buildValidator($translatorMock);
+            $presenceMock = $this->presenceMock();
+
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock);
 
             try {
                 $validatorMock->fails();
@@ -175,7 +192,9 @@
             $translatorMock = $this->translatorMock();
             $translatorMock->shouldReceive('trans')->once();
 
-            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
+            $presenceMock = $this->presenceMock();
+
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock, $modelRules);
 
             $validatorMock->setModel($model);
 
@@ -188,9 +207,10 @@
             $modelRules = ['name' => 'required', 'login' => 'required'];
 
             $translatorMock = $this->translatorMock();
+            $presenceMock = $this->presenceMock();
             $translatorMock->shouldReceive('trans')->twice();
 
-            $validatorMock = $this->buildValidator($translatorMock, $modelRules);
+            $validatorMock = $this->buildValidator($translatorMock, $presenceMock, $modelRules);
 
             $validatorMock->setModel([]);
 

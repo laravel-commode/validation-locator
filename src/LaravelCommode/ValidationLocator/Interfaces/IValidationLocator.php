@@ -1,6 +1,7 @@
 <?php namespace LaravelCommode\ValidationLocator\Interfaces;
 
     use Illuminate\Foundation\Application;
+    use Illuminate\Validation\PresenceVerifierInterface;
     use LaravelCommode\ValidationLocator\Validators\Validator;
     use Symfony\Component\Translation\TranslatorInterface;
 
@@ -62,4 +63,17 @@
          * @return $this
          */
         public function setTranslator(TranslatorInterface $translator);
+
+        /**
+         * Returns currently used presence verifier.
+         * @return PresenceVerifierInterface
+         */
+        public function getPresenceVerifier();
+
+        /**
+         * Sets presence verifier.
+         * @param PresenceVerifierInterface $presenceVerifier
+         * @return $this
+         */
+        public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier);
     }

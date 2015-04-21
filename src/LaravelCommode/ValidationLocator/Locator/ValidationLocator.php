@@ -1,5 +1,6 @@
 <?php namespace LaravelCommode\ValidationLocator\Locator;
 
+    use Illuminate\Validation\PresenceVerifierInterface;
     use LaravelCommode\ValidationLocator\Interfaces;
     use LaravelCommode\ValidationLocator\Validators\Validator;
     use LaravelCommode\ValidationLocator\Interfaces\IValidationLocator;
@@ -13,10 +14,15 @@
          * @var TranslatorInterface
          */
         private $translator;
+        /**
+         * @var PresenceVerifierInterface
+         */
+        private $presenceVerifier;
 
-        public function __construct(TranslatorInterface $translator)
+        public function __construct(TranslatorInterface $translator, PresenceVerifierInterface $presenceVerifier)
         {
             $this->translator = $translator;
+            $this->presenceVerifier = $presenceVerifier;
         }
 
         /**
@@ -44,10 +50,10 @@
          */
         public function getValidator($alias)
         {
-            if (isset($this->validators[$alias]))
+            if (array_key_exists($alias, $this->validators))
             {
                 $validator = $this->validators[$alias];
-                return new $validator($this->translator);
+                return new $validator($this->translator, $this->presenceVerifier);
             }
 
             throw new \Exception("Unknown validator {$alias}");
@@ -86,6 +92,24 @@
         public function setTranslator(TranslatorInterface $translator)
         {
             $this->translator = $translator;
+            return $this;
+        }
+
+        /**
+         * @return PresenceVerifierInterface
+         */
+        public function getPresenceVerifier()
+        {
+            return $this->presenceVerifier;
+        }
+
+        /**
+         * @param PresenceVerifierInterface $presenceVerifier
+         * @return $this
+         */
+        public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier)
+        {
+            $this->presenceVerifier = $presenceVerifier;
             return $this;
         }
     }

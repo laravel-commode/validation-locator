@@ -1,5 +1,6 @@
 <?php
     namespace Locator;
+    use Illuminate\Validation\PresenceVerifierInterface;
     use LaravelCommode\ValidationLocator\Locator\ValidationLocator;
     use LaravelCommode\ValidationLocator\Validators\Validator;
     use Symfony\Component\Translation\TranslatorInterface;
@@ -30,7 +31,12 @@
             return \Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
         }
 
-        protected function validatorMock(TranslatorInterface $translator)
+        protected function presenceMock()
+        {
+            return \Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
+        }
+
+        protected function validatorMock(TranslatorInterface $translator, PresenceVerifierInterface $presenceVerifier)
         {
             return $this->getMockBuilder('LaravelCommode\ValidationLocator\Validators\Validator')->
                 setConstructorArgs(func_get_args())->
@@ -40,14 +46,14 @@
 
         public function testConstructor()
         {
-            $validationLocator = new ValidationLocator($translator = $this->translatorMock());
+            $validationLocator = new ValidationLocator($translator = $this->translatorMock(), $this->presenceMock());
 
             $this->assertSame($validationLocator->getTranslator(), $translator);
         }
 
         public function testGetSetTranslator()
         {
-            $validationLocator = new ValidationLocator($translator = $this->translatorMock());
+            $validationLocator = new ValidationLocator($translator = $this->translatorMock(), $this->presenceMock());
 
             $this->assertSame($validationLocator->getTranslator(), $translator);
 
@@ -58,7 +64,7 @@
 
         public function testAddGetValidatorExisting()
         {
-            $validationLocator = new ValidationLocator($translator = $this->translatorMock());
+            $validationLocator = new ValidationLocator($translator = $this->translatorMock(), $this->presenceMock());
 
             $validationLocator->addValidator('test', 'Locator\TestValidator');
 
@@ -68,7 +74,7 @@
 
         public function testAddGetValidatorNotExisting()
         {
-            $validationLocator = new ValidationLocator($translator = $this->translatorMock());
+            $validationLocator = new ValidationLocator($translator = $this->translatorMock(), $this->presenceMock());
 
             $validationLocator->addValidator('test', 'Locator\TestValidator');
 
