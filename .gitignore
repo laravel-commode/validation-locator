@@ -1,6 +1,7 @@
 /doc
 /vendor
 /.idea
+/oldtests
 composer.phar
 composer.lock
 .DS_Store

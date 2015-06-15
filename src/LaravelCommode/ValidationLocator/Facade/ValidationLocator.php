@@ -1,17 +1,13 @@
 <?php
-    namespace LaravelCommode\ValidationLocator\Facade;
-    use Illuminate\Support\Facades\Facade;
+namespace LaravelCommode\ValidationLocator\Facade;
 
-    /**
- * Created by PhpStorm.
- * User: madman
- * Date: 11/25/14
- * Time: 1:26 AM
- */
-    class ValidationLocator extends Facade
+use Illuminate\Support\Facades\Facade;
+use LaravelCommode\ValidationLocator\ValidationLocatorServiceProvider;
+
+class ValidationLocator extends Facade
+{
+    protected static function getFacadeAccessor()
     {
-        protected static function getFacadeAccessor()
-        {
-            return 'commode.validation-locator';
-        }
-    } 
+        return ValidationLocatorServiceProvider::PROVIDES_LOCATOR;
+    }
+}
